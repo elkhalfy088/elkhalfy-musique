@@ -56,12 +56,13 @@ jobs:
         run: |
           set -euo pipefail
           while IFS= read -r -d '' build_file; do
-            sed -i \
-              -e "s/JavaVersion\\.VERSION_1_8/JavaVersion.VERSION_17/g" \
-              -e "s/jvmTarget[[:space:]]*=[[:space:]]*['\"]1\\.8['\"]/jvmTarget = '17'/g" \
+            sed -E -i \
+              -e 's/(sourceCompatibility|targetCompatibility)[[:space:]]*([=:])?[[:space:]]*(JavaVersion\.)?VERSION_1_8/\1 \2 JavaVersion.VERSION_17/g' \
+              -e 's/(sourceCompatibility|targetCompatibility)[[:space:]]*([=:])?[[:space:]]*1\.8/\1 \2 JavaVersion.VERSION_17/g' \
+              -e 's/(jvmTarget[[:space:]]*=[[:space:]]*["'\''])1\.8(["'\''])/\1 17\2/g' \
               "$build_file"
             echo "Aligned Java/Kotlin targets in $build_file"
-          done < <(find "$PUB_CACHE/hosted/pub.dev" -path '*/android/build.gradle' -type f -print0)
+          done < <(find "$PUB_CACHE/hosted/pub.dev" -type f \( -name 'build.gradle' -o -name 'build.gradle.kts' \) -print0)
 
       - name: Analyze code
         run: flutter analyze --no-fatal-infos || true
