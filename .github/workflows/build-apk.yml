@@ -51,6 +51,31 @@ jobs:
             fi
           done
 
+      - name: Align Android Java and Kotlin targets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$HOME/.gradle/init.d"
+          cat > "$HOME/.gradle/init.d/android-jvm-target.gradle" <<'EOF'
+          allprojects {
+            afterEvaluate { project ->
+              if (project.plugins.hasPlugin('com.android.application') ||
+                  project.plugins.hasPlugin('com.android.library')) {
+                project.android {
+                  compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                  }
+                }
+              }
+
+              project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                kotlinOptions.jvmTarget = '17'
+              }
+            }
+          }
+          EOF
+
       - name: Analyze code
         run: flutter analyze --no-fatal-infos || true
 
