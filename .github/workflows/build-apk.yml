@@ -51,15 +51,15 @@ jobs:
             fi
           done
 
-      - name: Align Android Java and Kotlin targets
+      - name: Align legacy Android plugin JVM targets
         shell: bash
         run: |
           set -euo pipefail
           while IFS= read -r -d '' build_file; do
             sed -E -i \
-              -e 's/(sourceCompatibility|targetCompatibility)[[:space:]]*([=:])?[[:space:]]*(JavaVersion\.)?VERSION_1_8/\1 \2 JavaVersion.VERSION_17/g' \
-              -e 's/(sourceCompatibility|targetCompatibility)[[:space:]]*([=:])?[[:space:]]*1\.8/\1 \2 JavaVersion.VERSION_17/g' \
-              -e 's/(jvmTarget[[:space:]]*=[[:space:]]*["'\''])1\.8(["'\''])/\1 17\2/g' \
+              -e 's/(sourceCompatibility|targetCompatibility)[[:space:]]*([=:])?[[:space:]]*(JavaVersion\.)?VERSION_[0-9_]+/\1 \2 JavaVersion.VERSION_1_8/g' \
+              -e 's/(sourceCompatibility|targetCompatibility)[[:space:]]*([=:])?[[:space:]]*[0-9]+\.[0-9]+/\1 \2 JavaVersion.VERSION_1_8/g' \
+              -e "s/^([[:space:]]*.*jvmTarget[[:space:]]*=).*$/\\1 '1.8'/g" \
               "$build_file"
             echo "Aligned Java/Kotlin targets in $build_file"
           done < <(find "$PUB_CACHE/hosted/pub.dev" -type f \( -name 'build.gradle' -o -name 'build.gradle.kts' \) -print0)
