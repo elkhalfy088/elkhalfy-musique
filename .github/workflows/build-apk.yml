@@ -1,0 +1,70 @@
+name: Build Flutter APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.6'
+          channel: 'stable'
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Analyze code
+        run: flutter analyze --no-fatal-infos || true
+
+      - name: Build APK (release)
+        run: flutter build apk --release --no-tree-shake-icons
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: elkhalfy-musique-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.0
+          name: "Elkhalfy Musique v1.0.0"
+          body: |
+            ## 🎵 Elkhalfy Musique v1.0.0
+            
+            تطبيق موسيقى احترافي لنظام Android
+            
+            ### المميزات:
+            - 🎵 عرض جميع الأغاني من الهاتف
+            - 🔊 تشغيل في الخلفية (حتى مع إغلاق الشاشة)
+            - 🔐 قفل التطبيق + إخفاء الأغاني بكود PIN
+            - ⏰ مؤقت النوم (بمدة أو وقت محدد)
+            - 📚 قوائم التشغيل، المفضلة، الألبومات
+            - 🎨 تصميم احترافي داكن
+            
+            ### التثبيت:
+            حمّل `app-release.apk` وثبّته على هاتفك مباشرة
+          files: build/app/outputs/flutter-apk/app-release.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

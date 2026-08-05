@@ -1,0 +1,68 @@
+name: elkhalfy_musique
+description: Elkhalfy Musique - Professional Music Player
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Audio
+  just_audio: ^0.9.36
+  audio_service: ^0.18.12
+  just_audio_background: ^0.0.1-beta.11
+  on_audio_query: ^2.9.0
+  
+  # State Management
+  provider: ^6.1.2
+  
+  # Storage
+  shared_preferences: ^2.2.3
+  flutter_secure_storage: ^9.0.0
+  
+  # UI
+  flutter_staggered_animations: ^1.1.1
+  cached_network_image: ^3.3.1
+  palette_generator: ^0.3.3+3
+  lottie: ^3.1.2
+  blur: ^3.1.0
+  glassmorphism: ^3.0.0
+  percent_indicator: ^4.2.3
+  sleek_circular_slider: ^2.0.1
+  
+  # Utilities
+  permission_handler: ^11.3.1
+  local_auth: ^2.2.0
+  rxdart: ^0.27.7
+  audio_waveforms: ^1.0.5
+  
+  # Icons & Fonts
+  cupertino_icons: ^1.0.2
+  google_fonts: ^6.2.1
+  
+  # Other
+  equatable: ^2.0.5
+  uuid: ^4.3.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Poppins-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
