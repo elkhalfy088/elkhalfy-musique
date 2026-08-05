@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:on_audio_query/on_audio_query.dart';
+import 'package:on_audio_query/on_audio_query.dart'
+    hide PlaylistModel, SongModel;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/song_model.dart';
 

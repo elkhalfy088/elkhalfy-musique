@@ -25,9 +25,11 @@ class AudioPlayerHandler extends BaseAudioHandler with QueueHandler, SeekHandler
 
   @override
   Future<void> addQueueItems(List<MediaItem> mediaItems) async {
-    final audioSource = mediaItems.map(_createAudioSource).toList();
-    await _player.setAudioSources(audioSource);
-    final newQueue = queue.value..addAll(mediaItems);
+    final playlist = ConcatenatingAudioSource(
+      children: mediaItems.map(_createAudioSource).toList(),
+    );
+    await _player.setAudioSource(playlist);
+    final newQueue = List<MediaItem>.from(mediaItems);
     queue.add(newQueue);
   }
 

@@ -30,8 +30,29 @@ jobs:
       - name: Get dependencies
         run: flutter pub get
 
+      - name: Add namespaces to legacy Android plugins
+        shell: bash
+        run: |
+          set -euo pipefail
+          for build_file in "$PUB_CACHE"/hosted/pub.dev/*/android/build.gradle; do
+            [ -f "$build_file" ] || continue
+            grep -q "com.android.library" "$build_file" || continue
+            grep -q "namespace" "$build_file" && continue
+
+            manifest="${build_file%build.gradle}src/main/AndroidManifest.xml"
+            namespace=""
+            if [ -f "$manifest" ]; then
+              namespace="$(sed -n 's/.*package="\([^"]*\)".*/\1/p' "$manifest" | head -n 1)"
+            fi
+
+            if [ -n "$namespace" ]; then
+              sed -i "/^[[:space:]]*android[[:space:]]*{/a\\    namespace '$namespace'" "$build_file"
+              echo "Added namespace $namespace to $build_file"
+            fi
+          done
+
       - name: Analyze code
-        run: flutter analyze --no-fatal-infos || true
+        run: flutter analyze --no-fatal-infos
 
       - name: Build APK (release)
         run: flutter build apk --release --no-tree-shake-icons
